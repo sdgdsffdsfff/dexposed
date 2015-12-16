@@ -18,8 +18,22 @@ import java.io.File;
 
 public class MainActivity extends Activity {
 
-	private boolean isSupport = false;
+	static {
+		// load xposed lib for hook.
+		try {
+			if (android.os.Build.VERSION.SDK_INT == 22){
+				System.loadLibrary("dexposed_l51");
+			} else if (android.os.Build.VERSION.SDK_INT > 19 && android.os.Build.VERSION.SDK_INT <= 21){
+				System.loadLibrary("dexposed_l");
+			} else if (android.os.Build.VERSION.SDK_INT > 14){
+				System.loadLibrary("dexposed");
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
 
+	private boolean isSupport = false;
     private boolean isLDevice= false;
 	
 	private TextView mLogContent;
@@ -30,8 +44,8 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		mLogContent = (TextView) (this.findViewById(R.id.log_content));
 		// check device if support and auto load libs
-        isSupport = DexposedBridge.canDexposed(this);
-        isLDevice = android.os.Build.VERSION.SDK_INT == 21;
+        isSupport = true;
+		isLDevice = android.os.Build.VERSION.SDK_INT >= 20;
 	}
 
 	//Hook system log click

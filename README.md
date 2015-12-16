@@ -1,5 +1,10 @@
 What is it?
 -----------
+
+[![Download](https://api.bintray.com/packages/hwjump/maven/dexposed/images/download.svg) ](https://bintray.com/hwjump/maven/dexposed/_latestVersion)
+[![Software License](https://rawgit.com/alibaba/dexposed/master/images/license.svg)](LICENSE)
+[![Join the chat at https://gitter.im/alibaba/dexposed](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/alibaba/dexposed?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)   
+
 Dexposed is a powerful yet non-invasive runtime [AOP (Aspect-oriented Programming)](http://en.wikipedia.org/wiki/Aspect-oriented_programming) framework
 for Android app development, based on the work of open-source [Xposed](https://github.com/rovo89/Xposed) [framework](https://github.com/rovo89/XposedBridge) project.
 
@@ -23,20 +28,19 @@ Typical use-cases
 
 Integration
 -----------
-Directly add jar and two so files from dexposed and dexposedbridge to your project as compile libraries.
+Directly add dexposed aar to your project as compile libraries, it contains a jar file "dexposedbridge.jar" two so files "libdexposed.so libdexposed_l.so" from 'dexposed' directory.
 
 Gradle dependency like following:
 
-	native_dependencies {
-	    artifact 'com.taobao.dexposed:dexposed_l:0.2+:armeabi'
-	    artifact 'com.taobao.dexposed:dexposed:0.2+:armeabi'
-	}
+```groovy
 	dependencies {
-	    compile files('libs/dexposedbridge.jar')
+	    compile 'com.taobao.android:dexposed:0.1.1@aar'
 	}
+```
 
 Insert the following line into the initialization phase of your app, as early as possible:
 
+```java
     public class MyApplication extends Application {
 
         @Override public void onCreate() {        
@@ -48,6 +52,7 @@ Insert the following line into the initialization phase of your app, as early as
         }
         ...
     }
+```
 
 It's done.
 
@@ -58,6 +63,7 @@ There are three injection points for a given method: *before*, *after*, *replace
 
 Example 1: Attach a piece of code before and after all occurrences of `Activity.onCreate(Bundle)`.
 
+```java
         // Target class, method with parameter types, followed by the hook callback (XC_MethodHook).
 		DexposedBridge.findAndHookMethod(Activity.class, "onCreate", Bundle.class, new XC_MethodHook() {
         
@@ -82,9 +88,11 @@ Example 1: Attach a piece of code before and after all occurrences of `Activity.
 		        XposedHelpers.callMethod(param.thisObject, "sampleMethod", 2);
 			}
 		});
-				
+```
+
 Example 2: Replace the original body of the target method.
 
+```java
 		DexposedBridge.findAndHookMethod(Activity.class, "onCreate", Bundle.class, new XC_MethodReplacement() {
 		
 			@Override protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
@@ -93,8 +101,26 @@ Example 2: Replace the original body of the target method.
 			}
 
 		});
-		
+```
+
 Checkout the `example` project to find out more.
+
+Support
+----------
+Dexposed support all dalvik runtime arm architecture devices from Android 2.3 to 4.4 (no include 3.0). The stability has been proved in our long term product practice.
+
+Follow is support status.
+
+Runtime | Android Version | Support
+------  | --------------- | --------
+Dalvik  | 2.2             | Not Test
+Dalvik  | 2.3             | Yes
+Dalvik  | 3.0             | No
+Dalvik  | 4.0-4.4         | Yes
+ART     | 5.0             | Testing
+ART     | 5.1             | No
+ART     | M               | No
+ 
 
 Contribute
 ----------
